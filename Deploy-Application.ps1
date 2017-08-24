@@ -56,15 +56,15 @@ Try {
 	##* VARIABLE DECLARATION
 	##*===============================================
 	## Variables: Application
-	[string]$appVendor = ''
-	[string]$appName = ''
-	[string]$appVersion = ''
-	[string]$appArch = ''
+	[string]$appVendor = 'CNC Software, Inc.'
+	[string]$appName = 'Mastercam'
+	[string]$appVersion = '2018'
+	[string]$appArch = 'x64'
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
 	[string]$appScriptVersion = '1.0.0'
-	[string]$appScriptDate = '06/12/2017'
-	[string]$appScriptAuthor = '<author name>'
+	[string]$appScriptDate = '08/25/2017'
+	[string]$appScriptAuthor = 'Truong Nguyen'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
 	[string]$installName = ''
@@ -112,7 +112,7 @@ Try {
 		[string]$installPhase = 'Pre-Installation'
 
 		## Show Welcome Message, close applications if required, verify there is enough disk space to complete the install, and persist the prompt
-		Show-InstallationWelcome -CloseApps 'iexplore' -CheckDiskSpace -PersistPrompt
+		Show-InstallationWelcome -CloseApps 'mastercam' -CheckDiskSpace -PersistPrompt
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
@@ -132,7 +132,8 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp"/silent /action=install /language=en-US /CNC_SIM_TYPE=N" /qn"
+		Execute-Process -Path "mastercam2018-update1-patch" -Parameters "/s /v"/qn""
 
 		##*===============================================
 		##* POST-INSTALLATION
@@ -140,6 +141,7 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
+		Remove-File -Path "C:\Users\Public\Desktop\Mastercam 2018.lnk"
 
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {Show-InstallationPrompt -Message "'$appVendor' '$appName' '$appVersion' has been Sucessfully Installed." -ButtonRightText ‘OK’ -Icon Information -NoWait}
@@ -152,7 +154,7 @@ Try {
 		[string]$installPhase = 'Pre-Uninstallation'
 
 		## Show Welcome Message, close applications with a 60 second countdown before automatically closing
-		Show-InstallationWelcome -CloseApps 'iexplore' -CloseAppsCountdown 60
+		Show-InstallationWelcome -CloseApps 'mastercam' -CloseAppsCountdown 60
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
@@ -172,7 +174,7 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
-
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp"/silent /action=uninstall /language=en-US" /qn"
 
 		##*===============================================
 		##* POST-UNINSTALLATION
