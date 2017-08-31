@@ -63,7 +63,7 @@ Try {
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
 	[string]$appScriptVersion = '1.0.0'
-	[string]$appScriptDate = '08/25/2017'
+	[string]$appScriptDate = '08/31/2017'
 	[string]$appScriptAuthor = 'Truong Nguyen'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -142,6 +142,7 @@ Try {
 
 		## <Perform Post-Installation tasks here>
 		Remove-File -Path "C:\Users\Public\Desktop\Mastercam 2018.lnk"
+		Copy-File -Path "$dirFiles\nethasp.ini" -Destination "C:\Program Files\Mcam2018\nethasp.ini"
 
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {Show-InstallationPrompt -Message "'$appVendor' '$appName' '$appVersion' has been Sucessfully Installed." -ButtonRightText ‘OK’ -Icon Information -NoWait}
