@@ -62,8 +62,8 @@ Try {
 	[string]$appArch = 'x64'
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
-	[string]$appScriptVersion = '1.0.0'
-	[string]$appScriptDate = '08/31/2017'
+	[string]$appScriptVersion = '2.0.0'
+	[string]$appScriptDate = '09/01/2017'
 	[string]$appScriptAuthor = 'Truong Nguyen'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -132,8 +132,8 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp"/silent /action=install /language=en-US /CNC_SIM_TYPE=N" /qn"
-		Execute-Process -Path "mastercam2018-update1-patch" -Parameters "/s /v"/qn""
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp'/silent /action=install /language=en-US /CNC_SIM_TYPE=N' /qn"
+		Execute-Process -Path "mastercam2018-update1-patch" -Parameters "/s /v'/qn'"
 
 		##*===============================================
 		##* POST-INSTALLATION
@@ -175,7 +175,7 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
-		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp"/silent /action=uninstall /language=en-US" /qn"
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp'/silent /action=uninstall /language=en-US' /qn"
 
 		##*===============================================
 		##* POST-UNINSTALLATION
