@@ -132,8 +132,8 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp'/silent /action=install /language=en-US /CNC_SIM_TYPE=N' /qn"
-		Execute-Process -Path "mastercam2018-update1-patch" -Parameters "/s /v'/qn'"
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters '-sp"/silent /action=install /language=en-US /CNC_SIM_TYPE=N" /qn'
+		Execute-Process -Path "mastercam2018-update1-patch" -Parameters '/s /v"/qn"'
 
 		##*===============================================
 		##* POST-INSTALLATION
@@ -175,7 +175,7 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
-		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp'/silent /action=uninstall /language=en-US' /qn"
+		Execute-Process -Path "mastercam2018-web.exe" -Parameters '-sp"/silent /action=uninstall /language=en-US" /qn'
 
 		##*===============================================
 		##* POST-UNINSTALLATION
