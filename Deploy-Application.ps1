@@ -146,9 +146,10 @@ Try {
 		Remove-File -Path "C:\Users\Public\Desktop\Mastercam 2018.lnk"
 		Copy-File -Path "$dirFiles\nethasp.ini" -Destination "C:\Program Files\Mcam2018\nethasp.ini"
 
-		$HKCURegistrySettings = {
-			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Configurations\Dialog data\UpdateNotify" -Name "AutoCheck" -Value "0" -Type "DWord"
-			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Customer Feedback Program" -Name "Enabled" -Value "0" -Type "DWord"
+		[scriptblock]$HKCURegistrySettings = {
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Configurations\Dialog data\UpdateNotify" -Name "AutoCheck" -Value "0" -Type "DWord" -SID $UserProfile.SID
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Customer Feedback Program" -Name "Enabled" -Value "0" -Type "DWord" -SID $UserProfile.SID
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018" -Name "Enabled" -Value "2" -Type "DWord" -SID $UserProfile.SID
 		}
 		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
 
