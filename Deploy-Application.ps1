@@ -132,8 +132,10 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-		Execute-Process -Path "mastercam2018-web.exe" -Parameters "-sp`"/silent /action=install /language=en-US /CNC_SIM_TYPE=N`" /qn"
-		Execute-Process -Path "mastercam2018-update1-patch.exe" -Parameters "/s /v`"/qn`""
+		Execute-Process -Path "$dirFiles\Mastercam\setup.exe" -Parameters "/silent /action=install /language=en-US /CNC_SIM_TYPE=N"
+		Execute-Process -Path "$dirSupportFiles\mastercam2018-update1-patch.exe" -Parameters "/s /v`"/qn`""
+        Execute-Process -Path "$dirSupportFiles\mastercam2018-update2-patch.exe" -Parameters "/s /v`"/qn`""
+        Execute-Process -Path "$dirSupportFiles\mastercam2018-update3-patch.exe" -Parameters "/s /v`"/qn`""
 
 		##*===============================================
 		##* POST-INSTALLATION
