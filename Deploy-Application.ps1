@@ -62,8 +62,8 @@ Try {
 	[string]$appArch = 'x64'
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
-	[string]$appScriptVersion = '3.0.0'
-	[string]$appScriptDate = '01/17/2018'
+	[string]$appScriptVersion = '4.0.0'
+	[string]$appScriptDate = '01/18/2018'
 	[string]$appScriptAuthor = 'Truong Nguyen'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -145,6 +145,12 @@ Try {
 		## <Perform Post-Installation tasks here>
 		Remove-File -Path "C:\Users\Public\Desktop\Mastercam 2018.lnk"
 		Copy-File -Path "$dirFiles\nethasp.ini" -Destination "C:\Program Files\Mcam2018\nethasp.ini"
+
+		$HKCURegistrySettings = {
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Configurations\Dialog data\UpdateNotify" -Name "AutoCheck" -Value "0" -Type "DWord"
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Customer Feedback Program" -Name "Enabled" -Value "0" -Type "DWord"
+		}
+		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
 
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {Show-InstallationPrompt -Message "'$appVendor' '$appName' '$appVersion' has been Sucessfully Installed." -ButtonRightText ‘OK’ -Icon Information -NoWait}
