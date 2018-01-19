@@ -149,6 +149,7 @@ Try {
 		[scriptblock]$HKCURegistrySettings = {
 			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Configurations\Dialog data\UpdateNotify" -Name "AutoCheck" -Value "0" -Type "DWord" -SID $UserProfile.SID
 			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Customer Feedback Program" -Name "Enabled" -Value "0" -Type "DWord" -SID $UserProfile.SID
+			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018\Customer Feedback Program" -Name "Reminder" -Value "7:17:2020:18:12:38" -Type "String" -SID $UserProfile.SID
 			Set-RegistryKey -Key "HKEY_CURRENT_USER\Software\CNC Software, Inc.\Mastercam 2018" -Name "EULA count" -Value "2" -Type "DWord" -SID $UserProfile.SID
 		}
 		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
