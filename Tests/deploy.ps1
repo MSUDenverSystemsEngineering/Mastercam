@@ -1,139 +1,138 @@
-<#
-.SYNOPSIS
-	Displays a graphical console to browse the help for the App Deployment Toolkit functions
-    # LICENSE #
-    PowerShell App Deployment Toolkit - Provides a set of functions to perform common application deployment tasks on Windows.
-    Copyright (C) 2017 - Sean Lillis, Dan Cunningham, Muhammad Mashwani, Aman Motazedian.
-    This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-    You should have received a copy of the GNU Lesser General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
-.DESCRIPTION
-	Displays a graphical console to browse the help for the App Deployment Toolkit functions
-.EXAMPLE
-	AppDeployToolkitHelp.ps1
-.NOTES
-.LINK
-	http://psappdeploytoolkit.com
-#>
+## Define variables
+$fileShare = New-PSSession -ComputerName $Env:serverName
 
-##*===============================================
-##* VARIABLE DECLARATION
-##*===============================================
+$stagingDir = $Env:stagingDirectory
+$cert = (Get-ChildItem Cert:\LocalMachine\My -CodeSigningCert)
+$timestampServer =  "http://timestamp.comodoca.com"
 
-## Variables: Script
-[string]$appDeployToolkitHelpName = 'PSAppDeployToolkitHelp'
-[string]$appDeployHelpScriptFriendlyName = 'App Deploy Toolkit Help'
-[version]$appDeployHelpScriptVersion = [version]'3.8.1'
-[string]$appDeployHelpScriptDate = '28/03/2020'
+$initParams = @{}
+## Uncomment the next line for debugging
+## $initParams.Add("Verbose", $true)
 
-## Variables: Environment
-[string]$scriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-#  Dot source the App Deploy Toolkit Functions
-. "$scriptDirectory\AppDeployToolkitMain.ps1" -DisableLogging
-. "$scriptDirectory\AppDeployToolkitExtensions.ps1"
-##*===============================================
-##* END VARIABLE DECLARATION
-##*===============================================
+## Set application properties
+$appName = $Env:APPVEYOR_PROJECT_NAME
+$appName = $appName -replace "_+"," " -replace "\-{2,}"," - " -replace "\b-+\b"," "
+$install = "Deploy-Application.exe -DeploymentType `"Install`" -AllowRebootPassThru"
+$uninstall = "Deploy-Application.exe -DeploymentType `"Uninstall`" -AllowRebootPassThru"
 
-##*===============================================
-##* FUNCTION LISTINGS
-##*===============================================
-
-Function Show-HelpConsole {
-	## Import the Assemblies
-	Add-Type -AssemblyName 'System.Windows.Forms' -ErrorAction 'Stop'
-	Add-Type -AssemblyName System.Drawing -ErrorAction 'Stop'
-
-	## Form Objects
-	$HelpForm = New-Object -TypeName 'System.Windows.Forms.Form'
-	$HelpListBox = New-Object -TypeName 'System.Windows.Forms.ListBox'
-	$HelpTextBox = New-Object -TypeName 'System.Windows.Forms.RichTextBox'
-	$InitialFormWindowState = New-Object -TypeName 'System.Windows.Forms.FormWindowState'
-
-	## Form Code
-	$System_Drawing_Size = New-Object -TypeName 'System.Drawing.Size'
-	$System_Drawing_Size.Height = 665
-	$System_Drawing_Size.Width = 957
-	$HelpForm.ClientSize = $System_Drawing_Size
-	$HelpForm.DataBindings.DefaultDataSourceUpdateMode = 0
-	$HelpForm.Name = 'HelpForm'
-	$HelpForm.Text = 'PowerShell App Deployment Toolkit Help Console'
-	$HelpForm.WindowState = 'Normal'
-	$HelpForm.ShowInTaskbar = $true
-	$HelpForm.FormBorderStyle = 'Fixed3D'
-	$HelpForm.MaximizeBox = $false
-	$HelpForm.Icon = New-Object -TypeName 'System.Drawing.Icon' -ArgumentList $AppDeployLogoIcon
-	$HelpListBox.Anchor = 7
-	$HelpListBox.BorderStyle = 1
-	$HelpListBox.DataBindings.DefaultDataSourceUpdateMode = 0
-	$HelpListBox.Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList ('Microsoft Sans Serif', 9.75, 1, 3, 1)
-	$HelpListBox.FormattingEnabled = $true
-	$HelpListBox.ItemHeight = 16
-	$System_Drawing_Point = New-Object -TypeName 'System.Drawing.Point'
-	$System_Drawing_Point.X = 0
-	$System_Drawing_Point.Y = 0
-	$HelpListBox.Location = $System_Drawing_Point
-	$HelpListBox.Name = 'HelpListBox'
-	$System_Drawing_Size = New-Object -TypeName 'System.Drawing.Size'
-	$System_Drawing_Size.Height = 658
-	$System_Drawing_Size.Width = 271
-	$HelpListBox.Size = $System_Drawing_Size
-	$HelpListBox.Sorted = $true
-	$HelpListBox.TabIndex = 2
-	$HelpListBox.add_SelectedIndexChanged({ $HelpTextBox.Text = Get-Help -Name $HelpListBox.SelectedItem -Full | Out-String })
-	$helpFunctions = Get-Command -CommandType 'Function' | Where-Object { ($_.HelpUri -match 'psappdeploytoolkit') -and ($_.Definition -notmatch 'internal script function') } | Select-Object -ExpandProperty Name
-	$null = $HelpListBox.Items.AddRange($helpFunctions)
-	$HelpForm.Controls.Add($HelpListBox)
-	$HelpTextBox.Anchor = 11
-	$HelpTextBox.BorderStyle = 1
-	$HelpTextBox.DataBindings.DefaultDataSourceUpdateMode = 0
-	$HelpTextBox.Font = New-Object -TypeName 'System.Drawing.Font' -ArgumentList ('Microsoft Sans Serif', 8.5, 0, 3, 1)
-	$HelpTextBox.ForeColor = [System.Drawing.Color]::FromArgb(255, 0, 0, 0)
-	$System_Drawing_Point = New-Object -TypeName System.Drawing.Point
-	$System_Drawing_Point.X = 277
-	$System_Drawing_Point.Y = 0
-	$HelpTextBox.Location = $System_Drawing_Point
-	$HelpTextBox.Name = 'HelpTextBox'
-	$HelpTextBox.ReadOnly = $True
-	$System_Drawing_Size = New-Object -TypeName 'System.Drawing.Size'
-	$System_Drawing_Size.Height = 658
-	$System_Drawing_Size.Width = 680
-	$HelpTextBox.Size = $System_Drawing_Size
-	$HelpTextBox.TabIndex = 1
-	$HelpTextBox.Text = ''
-	$HelpForm.Controls.Add($HelpTextBox)
-
-	## Save the initial state of the form
-	$InitialFormWindowState = $HelpForm.WindowState
-	## Init the OnLoad event to correct the initial state of the form
-	$HelpForm.add_Load($OnLoadForm_StateCorrection)
-	## Show the Form
-	$null = $HelpForm.ShowDialog()
+## Determine the app's author
+switch ($Env:APPVEYOR_REPO_COMMIT_AUTHOR) {
+  $Env:jordanGitHub { $author = $Env:jordan }
+  $Env:quanGitHub { $author = $Env:quan }
+  $Env:steveGitHub { $author = $Env:steve }
+  $Env:truongGitHub { $author = $Env:truong }
+  $Env:jamesGitHub { $author = $Env:james }
 }
 
-##*===============================================
-##* END FUNCTION LISTINGS
-##*===============================================
+## Remove unneeded files from the repository before uploading to the file share
+Write-Output "Cleaning up Git and CI files..."
+Remove-Item -Path "$Env:APPLICATION_PATH\appveyor.yml"
+Remove-Item -Path "$Env:APPLICATION_PATH\deploy.ps1"
+Remove-Item -Path "$Env:APPLICATION_PATH\TestsResults.xml"
+Remove-Item -Path "$Env:APPLICATION_PATH\.DS_Store" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$Env:APPLICATION_PATH\.gitignore" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$Env:APPLICATION_PATH\.gitattributes" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$Env:APPLICATION_PATH\Tests" -Recurse
+Remove-Item -Path "$Env:APPLICATION_PATH\.git" -Recurse -Force
 
-##*===============================================
-##* SCRIPT BODY
-##*===============================================
+## Sign PowerShell files to allow running the script directly with a RemoteSigned execution policy
+Get-ChildItem  "$Env:APPLICATION_PATH\AppDeployToolkit" `
+  | Where-Object { $_.Name -like "*.ps1" } `
+    | ForEach-Object `
+      { Set-AuthenticodeSignature $_.FullName $cert `
+        -HashAlgorithm SHA256 `
+        -TimestampServer "$timestampServer" `
+      }
 
-Write-Log -Message "Load [$appDeployHelpScriptFriendlyName] console..." -Source $appDeployToolkitHelpName
+Get-ChildItem  "$Env:APPLICATION_PATH" `
+  | Where-Object { $_.Name -like "Deploy-Application.ps1" } `
+    | ForEach-Object `
+      { Set-AuthenticodeSignature $_.FullName $cert `
+        -HashAlgorithm SHA256 `
+        -TimestampServer "$timestampServer" `
+      }
 
-## Show the help console
-Show-HelpConsole
+$contentLocation = "$Env:stagingContentLocation\$appName"
 
-Write-Log -Message "[$appDeployHelpScriptFriendlyName] console closed." -Source $appDeployToolkitHelpName
+## Remove previous staging toolkit files if detected, except for Files and SupportFiles
+Invoke-Command -Session $fileShare -ScriptBlock {
+  If (Test-Path -Path "$Using:stagingDir\$Using:appName" -PathType Container) {
+    Write-Output "Removing staging PowerShell App Deployment Toolkit..."
+    Remove-Item -Path "$Using:stagingDir\$Using:appName\*.*" -Force | Where-Object { ! $_.PSIsContainer }
+    Remove-Item -Path "$Using:stagingDir\$Using:appName\AppDeployToolkit" -Force -Recurse | `
+      Where-Object { $_.PSIsContainer }
+  } Else {
+    New-Item -Path $Using:stagingDir -Name $Using:appName -ItemType "directory"
+  }
+}
 
-##*===============================================
-##* END SCRIPT BODY
-##*===============================================
+## Upload the repository to the staging directory, overwriting any remaining files or support files
+Copy-Item -Path "$Env:APPLICATION_PATH\*" -Destination "$stagingDir\$appName\" -ToSession $fileShare -Force -Recurse
+
+## Set the application name as we want it to appear in Configuration Manager
+$appName = "Staging - $appName"
+
+## Import the ConfigurationManager.psd1 module
+If ($null -eq (Get-Module ConfigurationManager)) {
+  Import-Module "$($Env:SMS_ADMIN_UI_PATH)\..\ConfigurationManager.psd1" @initParams
+}
+
+## Connect to the site's drive if it is not already present
+If ($null -eq (Get-PSDrive -Name $Env:siteCode -PSProvider CMSite -ErrorAction SilentlyContinue)) {
+  New-PSDrive -Name $Env:siteCode -PSProvider CMSite -Root $Env:siteServer @initParams
+}
+
+## Set the active PSDrive to the ConfigMgr site code
+Set-Location "$($Env:siteCode):\" @initParams
+
+## Create the ConfigMgr application (if it doesn't exist) in the format "Staging - GitHub project name"
+## This also adds a link to the GitHub repository in the Administrator Comments field for reference and checks the box next to "Allow this application to be installed from the Install Application task sequence action without being deployed"
+## Reference: https://docs.microsoft.com/en-us/powershell/module/configurationmanager/new-cmapplication
+If ((Get-CMApplication -Name $appName -ErrorAction SilentlyContinue) `
+  -or (Get-CMApplication -Name "Staging - $Env:APPVEYOR_PROJECT_NAME" -ErrorAction SilentlyContinue)) {
+  
+    ## Rename an existing Staging application if detected
+  If (Get-CMApplication -Name "Staging - $Env:APPVEYOR_PROJECT_NAME" -ErrorAction SilentlyContinue) {
+    Get-CMApplication -Name "Staging - $Env:APPVEYOR_PROJECT_NAME" | Set-CMApplication -NewName $appName
+  }
+  ## Clear any existing owners and support contacts
+  Get-CMApplication -Name $appName | Set-CMApplication -ClearOwner -ClearSupportContact
+} Else {
+  New-CMApplication -Name $appName
+}
+
+Get-CMApplication -Name $appName | `
+  Set-CMApplication -Description "Repository: https://github.com/$Env:APPVEYOR_REPO_NAME" `
+    -ReleaseDate $(Get-Date -Format d) `
+    -Owner $author `
+    -SupportContact 'System Engineers' `
+    -AutoInstall $True
+
+## Create a new script deployment type with standard settings for PowerShell App Deployment Toolkit
+## You'll need to manually update the deployment type's detection method to find the software, make any other needed customizations to the application and deployment type, then distribute your content when ready.
+## Reference: https://docs.microsoft.com/en-us/powershell/module/configurationmanager/add-cmscriptdeploymenttype
+Get-CMApplication -Name $appName | `
+  Add-CMScriptDeploymentType -DeploymentTypeName `
+    "$appName $Env:APPVEYOR_BUILD_VERSION" `
+    -InstallCommand $install `
+    -ScriptLanguage "PowerShell" `
+    -ScriptText "Update this application's detection method to accurately locate the application." `
+    -ContentLocation $contentLocation `
+    -InstallationBehaviorType "InstallForSystem" `
+    -LogonRequirementType "WhetherOrNotUserLoggedOn" `
+    -MaximumRuntimeMins 120 `
+    -UserInteractionMode "Normal" `
+    -UninstallCommand $uninstall `
+    -ContentFallback `
+    -Comment "Commit: https://github.com/$Env:APPVEYOR_REPO_NAME/commit/$Env:APPVEYOR_REPO_COMMIT" `
+    -SlowNetworkDeploymentMode 'Download' `
+    -EnableBranchCache
 
 # SIG # Begin signature block
 # MIIfLgYJKoZIhvcNAQcCoIIfHzCCHxsCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAgpVdCqWcDjcoX
-# DNqh6em+CQ7xu+QRfJ9KIpkA57aGkqCCGhUwggSEMIIDbKADAgECAhBCGvKUCYQZ
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAtDoe0ebtDJthM
+# KNHCzpVbaRvtg2gcjjkWxg/UrlfuWaCCGhUwggSEMIIDbKADAgECAhBCGvKUCYQZ
 # H1IKS8YkJqdLMA0GCSqGSIb3DQEBBQUAMG8xCzAJBgNVBAYTAlNFMRQwEgYDVQQK
 # EwtBZGRUcnVzdCBBQjEmMCQGA1UECxMdQWRkVHJ1c3QgRXh0ZXJuYWwgVFRQIE5l
 # dHdvcmsxIjAgBgNVBAMTGUFkZFRydXN0IEV4dGVybmFsIENBIFJvb3QwHhcNMDUw
@@ -278,23 +277,23 @@ Write-Log -Message "[$appDeployHelpScriptFriendlyName] console closed." -Source 
 # bkNvbW1vbiBSU0EgQ29kZSBTaWduaW5nIENBAhAHA3HRD3laQHGZK5QHYpviMA0G
 # CWCGSAFlAwQCAQUAoIGEMBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZI
 # hvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcC
-# ARUwLwYJKoZIhvcNAQkEMSIEILY5N7jI3LAQ1Z8n6E/0GETo+3Nd9yWXQQPNVaGa
-# YQynMA0GCSqGSIb3DQEBAQUABIIBAIQ2n8shEC+YZdAUQhaKt0jpCt8iyA1v2lct
-# S5PtKz948phtLBfHzEtAhiOeXLFAflxmw6yomAoC7vzghHWiiUvKGtdeFVqi8vyy
-# RI6lZorGPg1gtB2AA/P4LqcKTmRQ3ZY6wsiGwnqe5rjYvQynSoHPjzsH+h/XNJP7
-# DFgkUx3iBkZO2o3OAcloqbMiLWgmiVwn6J4uMlVHdcIHt9TlHpDp7bLg3wyD4H8p
-# a8WRFn2cFxwyrJdz1iw9zocVYIcYl0knXDJeh6gW0xCkpU9VDHttDTKsirERQ8Jh
-# hVWfZmu76/l9fOpEE6roCzrtSc4j/oenQmZBN6r2YBHIgk9k5WWhggIoMIICJAYJ
+# ARUwLwYJKoZIhvcNAQkEMSIEIPBYtymgEC+Bkw5FxpgyWW8/k3mWpFT26IaVX7AA
+# HOtmMA0GCSqGSIb3DQEBAQUABIIBABuhJVME1C7tmmzj/eb+jFTPXsLKvJkvM6al
+# W72rH+DncobgexshV+Ni2AE8sELw0IWSa3c8eQ7dIc9Kmlx+XQmd9cA8zVRgmTDX
+# dwHhbZ7FaeV2FDSH3cvWojkYAenapWIUWFEMe9beeDqgxv4rjXVJylaO8QiU10Dy
+# sQoxoyWD8zRUVBQucUg+31ho3QN6LwEPP8niT+A17ZzzR9iFkrQXwOT88s1iUMsR
+# 9Kg93KqRNJn3p2bfBQrVJ9zExBclNY3fmRnlVc3VhzmfJEg2DyhLNZqbK3lQ2DKe
+# FA6nndWrFPEXBoU6zEJqDwUY4SZyGD9MkL28SKZVP21CHm4K+COhggIoMIICJAYJ
 # KoZIhvcNAQkGMYICFTCCAhECAQEwgY4wejELMAkGA1UEBhMCR0IxGzAZBgNVBAgT
 # EkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMR
 # Q09NT0RPIENBIExpbWl0ZWQxIDAeBgNVBAMTF0NPTU9ETyBUaW1lIFN0YW1waW5n
 # IENBAhArc9t0YxFMWlsySvIwV3JJMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMx
-# CwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDA0MjIxNTI1MDJaMCMGCSqG
-# SIb3DQEJBDEWBBRbACwXsWFD053nwmZhvrBxcGsvKDANBgkqhkiG9w0BAQEFAASC
-# AQAceSO6VmRIGXH3942bGeCU0OPjoLfH7Iqglq5LmdgG8mQ2ckld0DeFfZisgXnf
-# OUyerCZKQP+Jb7VXDS2tGzXZQJ3mJbyzjN7Zi4zsVRvpyHqYRpv+x1y4NsmLEaNV
-# lLRkz44FaEkVT3IqJ/WU1v8HlEolfdFdk2Z80e+sW2lFJC5mJ6WqADZ9UUxMdS8L
-# T64UYcruSVPWzouKs756Q2grCsxcLCbnn11PngShW7e9tnrXTAlDIsE+ereDqXzT
-# IqZQzmRJUBAOxJBdSAL+65mcxHQ05PrNSnmtXu9dwGziY+rlv39l5Jks931xCjTC
-# zLZRBoC/AzMA/+DCUdmtajY1
+# CwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDA0MjIxNTI1MDhaMCMGCSqG
+# SIb3DQEJBDEWBBRqGsXK7q29NmD+1og3tBQTDJrhXjANBgkqhkiG9w0BAQEFAASC
+# AQCZAphPLR3oMl/qAgXOS+bYQANDFyfugDNsnNP6rrKvOptv1frdsA53nnd3r281
+# BQrA1j73JOjGML05TzgB2KpYliNUDWAhUBpVG34gwSTnxu8rT+E9saY778IXADa0
+# bo/snmdgcC1HP7J1Jm4zszirDvjYAa8vg4MZpJSNMjiAq3u+3R8KRjtnhkkFIaZn
+# Rkuz5i7kjfSDj7tplmTy3A0wGXryaKd4m4psZV53f3RRbc+smjGeij4y4tIirN2g
+# PcYJe0M7Yco62oG072VJHRM+91FFUCgw6ActJnXubEqWyyq/T0Xr6kLi0xO9nKDZ
+# wU1hYqrNxPGMwf3aTi4twYAv
 # SIG # End signature block
