@@ -167,6 +167,12 @@ Try {
 		}
 		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
 
+		##Set software license location
+		[scriptblock]$HKLMRegistrySettings = {
+			Set-RegistryKey -Key "HKEY_LOCAL_MACHINE\SOFTWARE\WIBU-SYSTEMS\CodeMeter\Server\CurrentVersion\ServerSearchList\Server1" -Name "Address" -Type "String" -Value "147.153.19.162"
+			Set-RegistryKey -Key "HKEY_LOCAL_MACHINE\SOFTWARE\WIBU-SYSTEMS\CodeMeter\Server\CurrentVersion\ServerSearchList\Server2" -Name "Address" -Type "String" -Value "255.255.255.255"
+		}
+
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {
 
