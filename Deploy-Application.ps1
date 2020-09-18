@@ -149,7 +149,7 @@ Try {
 
 		## <Perform Installation tasks here>
 		##Execute-Process -Path "$dirFiles\Mastercam\setup.exe" -Parameters "/silent /action=install /language=en-US"
-		Execute-Process -Path "$dirFiles\mastercam2021-web.exe" -Parameters "-sp /silent /action=install /language=en-US"
+		Execute-Process -Path "$dirFiles\mastercam2021-web.exe" -Parameters "/silent /action=install /language=en-US"
 
 		##*===============================================
 		##* POST-INSTALLATION
