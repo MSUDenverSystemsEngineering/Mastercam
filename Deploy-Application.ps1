@@ -194,12 +194,6 @@ Try {
 
 		## <Perform Pre-Uninstallation tasks here>
 
-		# Uninstall MasterCam 2021
-		Execute-MSI -Action "Uninstall" -Path "{41DEF8DB-31EF-4207-A3FC-B8FF8B8455D4}" -PassThru
-		# Uninstall Mastercam Licensing Installer
-		Execute-MSI -Action "Uninstall" -Path "{3995E948-1455-4A02-874B-63B6DE3BDF8D}" -PassThru
-		# Uninstall CodeMeter Runtime Kit v7.00b
-		Execute-MSI -Action "Uninstall" -Path "{96AD9B70-79C3-4364-8D45-15EB8589508F}" -PassThru
 
 		##*===============================================
 		##* UNINSTALLATION
@@ -213,7 +207,12 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
-
+		# Uninstall MasterCam 2021
+		Execute-MSI -Action "Uninstall" -Path "{41DEF8DB-31EF-4207-A3FC-B8FF8B8455D4}" -PassThru
+		# Uninstall Mastercam Licensing Installer
+		Execute-MSI -Action "Uninstall" -Path "{3995E948-1455-4A02-874B-63B6DE3BDF8D}" -PassThru
+		# Uninstall CodeMeter Runtime Kit v7.00b
+		Execute-MSI -Action "Uninstall" -Path "{96AD9B70-79C3-4364-8D45-15EB8589508F}" -PassThru
 
 		##*===============================================
 		##* POST-UNINSTALLATION
