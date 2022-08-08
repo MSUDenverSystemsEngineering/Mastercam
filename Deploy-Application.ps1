@@ -157,7 +157,7 @@ Try {
 
 		## <Perform Installation tasks here>
 		##Execute-Process -Path "$dirFiles\Mastercam\setup.exe" -Parameters "/silent /action=install /language=en-US -WindowStyle "Hidden""
-		Execute-Process -Path "$dirFiles\mastercam2023-web.exe" -Parameters '-sp"/silent /action=install /language=en /CNC_SIM_TYPE=N" /qn' -PassThru
+		Execute-Process -Path "$dirFiles\mastercam2023-web.exe" -Parameters '-sp"/silent /action=install /language=en" /qn' -PassThru -IgnoreExitCodes '1000'
 
 		##*===============================================
 		##* POST-INSTALLATION
@@ -217,7 +217,7 @@ Try {
 
 		# <Perform Uninstallation tasks here>
 		# Uninstall MasterCam 2023
-		Execute-Process -Path "$dirFiles\mastercam2023-web.exe" -Parameters '-sp"/silent /action=uninstall" /qn' -PassThru
+		Execute-Process -Path "$dirFiles\mastercam2023-web.exe" -Parameters '-sp"/silent /action=uninstall" /qn' -PassThru -IgnoreExitCodes '1000'
 		# Uninstall Mastercam Licensing Installer
 		Execute-MSI -Action "Uninstall" -Path "{36ED70DA-DD77-4773-BFBC-6B63F77B107B}" -PassThru
 		# Uninstall CodeMeter Runtime Kit
@@ -283,8 +283,8 @@ Catch {
 # SIG # Begin signature block
 # MIImVgYJKoZIhvcNAQcCoIImRzCCJkMCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBpdLVgOQrZ+QJ3
-# nq/hJOn42Nr+5XvN8vbbMruDi20xYaCCH8EwggVvMIIEV6ADAgECAhBI/JO0YFWU
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCNwFJqz/IgVYPF
+# 9qq0nO7Vrrtsa8KrUbpDOUEId9vv0KCCH8EwggVvMIIEV6ADAgECAhBI/JO0YFWU
 # jTanyYqJ1pQWMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -458,32 +458,32 @@ Catch {
 # ZDErMCkGA1UEAxMiU2VjdGlnbyBQdWJsaWMgQ29kZSBTaWduaW5nIENBIFIzNgIR
 # AKVN33D73PFMVIK48rFyyjEwDQYJYIZIAWUDBAIBBQCggYQwGAYKKwYBBAGCNwIB
 # DDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEE
-# AYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkqhkiG9w0BCQQxIgQghj6O5zvyKIOV
-# kNu3NZbJj/NLgRq78AMHBW9Hr20L5SEwDQYJKoZIhvcNAQEBBQAEggGAKt5bSj4M
-# 9m0MCM5I7JJLNEgxX203Tno5jGrmMPhAAuFBQ3DClqCRusp2Fu9BTzPgo02O6rKW
-# XBdkDNTYThozp7NVXGyXvkt09sXPesYaGPly3+eFFBXEfGKRLc8TCzayJIHtlYcz
-# tOZStk/r7CWeJfGE1JAmUYjkDBrHQ6JRlKISmeQemtUHD6wRNZZG7uolvMDrQAdA
-# mJfkeAWL2NYZYbRRLKiJodPfT3flbSSa0kHa8e7bq+qsDmQTEBeIL124Xwayspem
-# XbU4hMFVMr6hqmir2UTSF41SHjBNuE4JuLPgKURATQqQu7bUrQdoMlJu2cfnsbKT
-# bJiJ6crP4zoBtzpnLT2qgs8ZXwHsLitcFfJ1zEpOuVpE6unNuMYExaRmNtuzElXA
-# WktNMCxMYQfNnkQlX5kWqIqGZqe+8027Dc3fCIdHkFVY7DF1ek505cdd5dnIc4OZ
-# saGx1KOl7H+qVSDb3K+gZM0vnpZrMzONPIz8ePbLF1BidMDSj3rukpDwoYIDTDCC
+# AYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkqhkiG9w0BCQQxIgQg7F5Xi8jXbs3D
+# aYzEENAHk+uY0x1e1VZWYAwMfYqmS5AwDQYJKoZIhvcNAQEBBQAEggGABK8p9r9k
+# P+lG6vviKG/GWwfKzpuuDU11zSgHlEQAL5/bLcLHXFoQTzxxa9RXsMUJzSiQZXN0
+# T5CUDbdXd6eRjryLSM14UhrrqlQWcaPWKQgwlcN8qeyVYaVvdq/FhfN6WpEB6lwO
+# ipatpN4DMMEKKiqm3eNWWr2PmFwg1KsSfp2L0LEfeG4fcQvC1MDeTF3IY3rXG+QQ
+# /TNAkfrvDV67gLBqYpWNa9ZNReRg7ZxpqNLKhDvAbg7y3fWMRLKMI9AxSkwl7WEs
+# nOgUgf4y4ZE6E8WxxZQ83P9YxN5o4cl6h9CnvUkBY4E8V3anmagRgifgD8DMMyUk
+# jwNoQyYyvL12zrkcwJJ7aqhBfd5uPPhGPdDH7yM8SSqmNuuh4qMFERSwpKnwjols
+# G9Bv/nz1cxhq9a3JU6FcGhpOA/UptwModzImYArdo2zF/WF4sMSW46whyNpj0uMY
+# NbgBbPvmCCx6ydShTdTPOYYE3uIskidmEC0cfwrZSGTj1awmc8MQxLzqoYIDTDCC
 # A0gGCSqGSIb3DQEJBjGCAzkwggM1AgEBMIGSMH0xCzAJBgNVBAYTAkdCMRswGQYD
 # VQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAWBgNV
 # BAoTD1NlY3RpZ28gTGltaXRlZDElMCMGA1UEAxMcU2VjdGlnbyBSU0EgVGltZSBT
 # dGFtcGluZyBDQQIRAJA5f5rSSjoT8r2RXwg4qUMwDQYJYIZIAWUDBAICBQCgeTAY
-# BgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMjA4MDEy
-# MjUwNTRaMD8GCSqGSIb3DQEJBDEyBDBW8xYhUfPpCpJu5A2sh4xdef8pskhDFW8Q
-# eKSS8TRv0oJ+VfY63AFmUpSLxJN2xdIwDQYJKoZIhvcNAQEBBQAEggIAC6qjNWWK
-# A2jrtnP9U5QVBHJbwODrELNZyeFcX99/Gl1yPOFDj76Lrh2mrpkVQJ3vSJjxsnJJ
-# LDxeiGdDsxOY42NuAP4tIgslcUYtLHkVanFbnOi3oE3h8xrvnFeoYX2sFPC2ZVSt
-# dO+VYWt92h4BePEwkK6B4kV7p0Ft/Hrzftyb26JR3gn8Q0/BcmvHFCN9egYUhOym
-# CAUdBwbACU3vGs2KySLsirBSBiDsJsD+u+qJ9Bnit/KGr9iC2qiSbidHptN3xm/S
-# RpBekJor4gARIWDCkm8XXe8UQ7weHRSPjQxyrwzmwbMQGFgJHjrh5Y40JY6h0vHB
-# IyXH1L5+gRF/rD99blBTfOCTKoTZf6wNohkseuv+fY9d8HD8ycSPo9P4fceJOjoD
-# 68qDf5brJzjyS09pXJen47/1Vnkpwo73U/7dIUOzYCxB0vBUm0FijSIVECpW+w86
-# c6p78Y9VRpEVGNVEgLArEb80r+1a1A/2W1pq0ptkxcQKAEcvhQ1+vfwffvYO1DvV
-# K9Wj4XbeVwOn9wJDIDMBT8J5FW2as/LLYzfB/vjg3djPmTeJkR4Ofl+yGNpASzrT
-# Ctcoa01lfLnLd2bNiWz9dJs9T6GVLIeimEfXlL7MKj62hmEtbreH8aSk6vlklTAF
-# rt4iu6dvCDk9B1zAMylZkGQDDnWuRE5Ne5s=
+# BgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMjA4MDgx
+# NDU4NDBaMD8GCSqGSIb3DQEJBDEyBDBGM5gLRnJ3IUzE/BaPnNXaxpN97euaN+rM
+# yOka6jqWc9DWO8mJf5RQlYtu1RuXt5IwDQYJKoZIhvcNAQEBBQAEggIABiXf5j6M
+# akeMcOYGdj2aahAUPc6SuYlMKuXgFU6lBn0VU3GbQmdJqFl/CN+FuCdRi86bGb/p
+# 5ahg3qQlRx91aXBXCnj2OISYML+pOyrR8QfHrq1RbyBqlrW0R6ugYdhMUCoIlB6M
+# qrrBSPfGIpz2x6ldKKi883wXxZ8PPmnPSs+ry788Vgf/N/aklmPATqCSQbm1PVNp
+# cgiqLsKEyEQ3d77yLpr3Xi6GQTR0NN/LVtL/fzolWeiALLjhOwY3gRB0LUord71I
+# Gq1giXJ2OGe8EXPr0EpnHtWpBVHoV8cDdsuvyC85b1RFbFTuE1GoBmX5iaW+jWWC
+# MGM/PLI865VElFF4sDDe5RuHPVnZgCbs4egIcs7pcectPGYcJmunkNTgCD80bK1E
+# 3oTW+JP2LUjzZR7JEh2gvO8Wj9VApAniTwO9C/LcailCnn1H0/eYLlu2C+lVpkJo
+# YzvUItb7q9yjvhR4tAzSIvbk/h5+xt5vBneM7fgnh/HgC1rUbd73KtXtTCowTK5V
+# dwVgHY9+VKNiJB78nqCcSPjch3Q6gsgFFnKTvn54Sw7GVGreoNuygIhXcJ2K6lUr
+# N2brCDpbNdCVc1J97vVQemz20EiEq2JTpD16kpIvaJfC51r4SoBUfIHPsfIO/1XR
+# 3ODJPJel+BNXJDgEPgIkv/HLlT++dCMBQkY=
 # SIG # End signature block
